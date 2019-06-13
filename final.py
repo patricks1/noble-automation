@@ -40,7 +40,6 @@ with open("items.csv") as f:
                 #Send link
                 message.append(link)
 
-
 # E-mail results                
 yag = yagmail.SMTP('automatedalertbot', 'standingroomonly')
 yag.send('robcarrington@gmail.com', 'subject', message)
