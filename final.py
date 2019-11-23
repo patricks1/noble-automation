@@ -41,5 +41,5 @@ with open("items.csv") as f:
                 message.append(link)
 
 # E-mail results                
-yag = yagmail.SMTP('automatedalertbot', 'standingroomonly')
-yag.send('robcarrington@gmail.com', 'subject', message)
+yag = yagmail.SMTP('sender@gmail.com', 'password')
+yag.send('youremail@provider.com', 'subject', message)
