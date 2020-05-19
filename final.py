@@ -4,7 +4,7 @@ import yagmail
 
 options = Options()
 options.headless = True
-driver = webdriver.Chrome("./chromedriver", chrome_options=options)
+driver = webdriver.Chrome("./chromedriver")# , chrome_options=options)
 
 message = []
 
