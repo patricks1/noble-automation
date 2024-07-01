@@ -4,4 +4,4 @@
 call C:\ProgramData\Anaconda3\Library\bin\conda.bat activate
 ::You will need to change the following line to correctly reflect where the
 ::`automation` folder is on your specific computer.
-python "C:\Users\n\Dropbox\nyccc_machine_learning_202007\automation\final202007_pc.py"
+python "C:\Users\n\automation\final.py"

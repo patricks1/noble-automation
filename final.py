@@ -1,12 +1,17 @@
-from selenium import webdriver
-from datetime import datetime
 import yagmail
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from datetime import datetime
 
 #You need to change the text part of the following to whatever your 
 #chromedriver is named. (Side note, make sure the chromedriver is in your
 #automation folder.)
 cService = webdriver.ChromeService(executable_path='./chromedriver_arm')
-driver =  webdriver.Chrome(service=cService)
+
+options=Options()
+# Comment the following line to see Selenium working in the foreground.
+options.add_argument('--headless=new') # Run in the background
+driver =  webdriver.Chrome(service=cService, options=options)
 driver.implicitly_wait(1)
 
 results = []
