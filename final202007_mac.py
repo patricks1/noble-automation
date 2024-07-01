@@ -32,24 +32,24 @@ with open(direc+'items.csv') as f:
         driver.get('https://newyork.craigslist.org')
 
         #2. Click on the category that you want
-        driver.find_element_by_link_text(category).click()
+        driver.find_element('link text'category).click()
 
         #3. Now that you're on the cat page, search for the
         #   `description`, making sure your results have a 
         #   price that falls within `min_` and `max_`
-        min_cl = driver.find_element_by_css_selector('.flatinput.min')
-        max_cl = driver.find_element_by_css_selector('.flatinput.max')
+        min_cl = driver.find_element('css selector','.flatinput.min')
+        max_cl = driver.find_element('css selector','.flatinput.max')
         min_cl.send_keys(min_)
         max_cl.send_keys(max_)
         
-        search = driver.find_element_by_css_selector('#query')
+        search = driver.find_element('css selector','#query')
         search.send_keys(description)
 
-        driver.find_element_by_css_selector('.icon-search').click()
+        driver.find_element('css selector','.icon-search').click()
         
         #4. Use css selectors to find all title elements and
         #   put their hrefs (i.e. link addresses) in `results`
-        titles = driver.find_elements_by_css_selector('.result-title')
+        titles = driver.find_elements('css selector','.result-title')
         for title in titles:
             link=title.get_attribute('href')
             results.append(link)
