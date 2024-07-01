@@ -1,45 +1,72 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from datetime import datetime
 import yagmail
 
-options = Options()
-options.headless = True
-driver = webdriver.Chrome("./chromedriver")# , chrome_options=options)
+#You need to change the text part of the following to whatever your 
+#chromedriver is named. (Side note, make sure the chromedriver is in your
+#automation folder.)
+cService = webdriver.ChromeService(executable_path='./chromedriver_arm')
+driver =  webdriver.Chrome(service=cService)
+driver.implicitly_wait(1)
 
-message = []
+results = []
+res_txt = ''
 
-with open("items.csv") as f:
+# For each line in items.csv, run Selenium to put all the links you
+# might be interested in in `results`.
+# i.e. appending `results`
+
+# The end goal is to have all bunch of links that might interest you
+# in the list `results`.
+
+with open('./items.csv') as f:
     for line in f.readlines():
-
-        # Extract description, category and price range
-        data = line.split(',')
-        desc = data[0]
-        category = data[1]
-        low = float(data[2])
-        high = float(data[3])
-
-        # Use description to separate out each set of results
-        message.append(desc)
+        lst = line.replace('\n','').split(',')
+        description=lst[0]
+        category=lst[1]
+        min_ = lst[2]
+        max_ = lst[3]
         
-        # Start at Craigslist homepage
-        driver.get("https://newyork.craigslist.org/")
-        
-        # Go to specified category
-        driver.find_element_by_link_text(category).click()
-        query_field = driver.find_element_by_css_selector("#query")
-        query_field.send_keys(desc)
-        driver.find_element_by_css_selector(".icon-search").click()
-   
-        results = driver.find_elements_by_css_selector(".result-row")
-        for result in results:
-            raw_price = result.find_element_by_css_selector(".result-price").text
-            price = float(raw_price.strip("$"))
-            # Check price range
-            if low < price and price < high:
-                link = result.find_element_by_css_selector(".result-title").get_attribute("href")
-                #Send link
-                message.append(link)
+        #1. go to craigslist.com
+        driver.get('https://newyork.craigslist.org')
 
-# E-mail results                
-yag = yagmail.SMTP('sender@gmail.com', 'password')
-yag.send('youremail@provider.com', 'subject', message)
+        #2. Click on the category that you want
+        driver.find_element('link text', category).click()
+
+        #3. Now that you're on the cat page, search for the
+        #   `description`, making sure your results have a 
+        #   price that falls within `min_` and `max_`
+        min_cl = driver.find_element('css selector','[placeholder="min"]')
+        max_cl = driver.find_element('css selector','[placeholder="max"]')
+        min_cl.send_keys(min_)
+        max_cl.send_keys(max_)
+        
+        search = driver.find_element('css selector','[enterkeyhint="search"]')
+        search.send_keys(description)
+
+        driver.find_element('css selector','.cl-exec-search').click()
+        
+        #4. Use css selectors to find all title elements and
+        #   put their hrefs (i.e. link addresses) in `results`
+        titles = driver.find_elements('css selector','.posting-title')
+        for title in titles:
+            link=title.get_attribute('href')
+            results.append(link)
+            res_txt+=link+'\n'
+
+now=datetime.now()
+time=now.strftime('%Y%m%d%H%M') 
+with open("results"+time+".txt", 'w') as f:
+    f.write(res_txt)
+
+#Uncomment the following if you want yagmail to email you the results. Make
+#sure you fill in your username and password.
+'''
+user=None
+passw=None
+yag=yagmail.SMTP(user, passw)
+tgt_email=None
+yag.send(tgt_email, 'Craigs List Results', results)
+'''
+
+driver.quit()
